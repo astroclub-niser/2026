@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spiralwrit — hex-spiral cipher engraver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-bg: #17161b;
+    --ink-plate: #1e1d24;
+    --ink-line: #ece6d8;
+    --ink-line-dim: #ece6d84a;
+    --accent: #b8483e;
+    --accent-dim: #b8483e99;
+    --paper-faint: #ece6d81a;
+    --text-body: #cfc9be;
+    --text-dim: #8b8679;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink-bg);
+    color:var(--text-body);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:48px 20px 80px;
+  }
+  .wrap{ width:100%; max-width:900px; }
+
+  header{ margin-bottom:34px; }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 10px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(32px,5vw,50px);
+    line-height:1.05;
+    margin:0 0 14px;
+    color:var(--ink-line);
+    letter-spacing:-0.01em;
+  }
+  h1 em{ font-style:italic; font-weight:500; color:var(--accent); }
+  .lede{
+    font-size:15px;
+    line-height:1.6;
+    color:var(--text-dim);
+    max-width:56ch;
+    margin:0;
+  }
+
+  .input-row{
+    margin:32px 0 22px;
+    position:relative;
+  }
+  textarea{
+    width:100%;
+    resize:none;
+    background:var(--ink-plate);
+    border:1px solid #33313a;
+    border-radius:2px;
+    color:var(--ink-line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:16px;
+    padding:16px 18px;
+    line-height:1.5;
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  textarea:focus{ border-color:var(--accent-dim); }
+  textarea::placeholder{ color:var(--text-dim); }
+
+  .controls{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-top:10px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--text-dim);
+  }
+  .toggle{
+    display:flex; align-items:center; gap:8px; cursor:pointer;
+    user-select:none;
+  }
+  .toggle input{ accent-color:var(--accent); width:14px; height:14px; }
+  .actions{ display:flex; gap:10px; }
+  button.action{
+    background:transparent;
+    border:1px solid #33313a;
+    color:var(--text-body);
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:.04em;
+    padding:8px 14px;
+    border-radius:2px;
+    cursor:pointer;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  button.action:hover{ border-color:var(--accent); color:var(--ink-line); }
+
+  .plate{
+    background:var(--ink-plate);
+    border:1px solid #2a2830;
+    border-radius:2px;
+    padding:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:340px;
+    overflow:hidden;
+  }
+  .plate svg{ width:100%; height:auto; max-height:70vh; display:block; }
+
+  .meta{
+    display:flex; justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; color:var(--text-dim);
+    margin-top:10px; letter-spacing:.03em;
+  }
+
+  footer{
+    margin-top:40px;
+    font-size:12px;
+    color:var(--text-dim);
+    line-height:1.7;
+    max-width:60ch;
+  }
+  footer b{ color:var(--text-body); font-weight:500; }
+
+  @media (max-width:640px){
+    body{ padding:32px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">SpiralWrit</p>
+    <h1>A phrase,<br>coiled into an <em>engraving</em>.</h1>
+    <p class="lede">Much is revealed by the knowing of Ball, yet true mastery thou shalt prove only when, in thy wisdom, thou canst recreate Ball.</p>
+  </header>
+
+  <div class="input-row">
+    <textarea id="text" rows="2" maxlength="240"
+      placeholder="Sphinx of Black Quartz, Judge My Vow.">Sphinx of Black Quartz, Judge My Vow.</textarea>
+  </div>
+
+  <div class="controls">
+    <div class="actions">
+      <button class="action" id="download">↓ download svg</button>
+    </div>
+  </div>
+
+  <div class="plate"><svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+  <div class="meta"><span id="cellcount">0 cells</span><span id="charcount">0 / 240</span></div>
+
+
+</div>
+
+<script>
+(function(){
+  const SQRT3 = Math.sqrt(3);
+  const SIZE = 24; // hex "radius" in px
+  const SVG_HEX_RADIUS = 16.2;
+
+  const DIRS = [
+    {q:1,r:0}, {q:1,r:-1}, {q:0,r:-1},
+    {q:-1,r:0}, {q:-1,r:1}, {q:0,r:1}
+  ];
+  const DIR_TO_EDGE = [0,5,4,3,2,1]; // direction index -> corner-edge index
+
+  const SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,'#";
+
+  const SVG_CENTER_X = 88.311058;
+  const SVG_CENTER_Y = 106.88946;
+
+  const customGlyphs = {
+    '#': `
+        <path d="M 95.145525,95.051807 81.476579,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 74.642109,106.88946 H 101.98" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 81.476579,95.051807 95.145525,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'A': `
+        <path d="m 81.476579,95.051807 c 0,0 6.966765,11.844583 0,23.675303" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 74.642109,106.88946 c 0,0 13.602795,0.0705 20.503416,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,95.051807 c 0,0 -6.763406,11.969943 6.834475,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'B': `
+        <path d="m 81.476579,95.051807 c 0,0 6.90554,11.837653 20.503421,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,95.051807 c 0,0 -6.866993,11.837653 -20.503416,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,118.72711 c 0,0 -6.768327,-11.83224 -13.668946,0" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    'C': `
+        <path d="m 81.476579,95.051805 c 0,0 6.846943,11.705365 -6.83447,11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,118.72711 c 0,0 -6.763403,-11.83765 6.834475,-11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 95.145525,95.051807 81.476579,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'D': `
+        <path d="m 95.145523,95.051805 c 0,0 -6.834524,11.843055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 81.476579,95.051805 c 0,0 6.835397,11.888055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 74.642109,106.88946 H 101.98" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'E': `
+        <path d="m 95.145525,118.72711 c 0,0 -6.768327,-11.83224 -13.668946,0" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 81.476579,95.051805 c 0,0 6.846943,11.705365 -6.83447,11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 101.98,106.88946 c 0,0 -13.668956,-0.0163 -6.834477,-11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'F': `
+        <path d="m 95.145525,118.72711 c 0,0 -6.768327,-11.83224 -13.668946,0" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 81.476579,95.051805 c 0,0 6.846943,11.705365 -6.83447,11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 101.98,106.88946 c 0,0 -13.668956,-0.0163 -6.834477,-11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    'G': `
+        <path d="m 74.642109,106.88946 c 0,0 13.668938,0.0504 6.83447,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145523,95.051805 c 0,0 -6.833193,11.821345 -13.668944,2e-6" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,118.72711 c 0,0 -6.763403,-11.83765 6.834475,-11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    'H': `
+        <path d="m 74.642109,106.88946 c 0,0 13.668941,0.0954 20.503416,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 101.98,106.88946 c 0,0 -13.668024,0.005 -20.503421,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145523,95.051805 c 0,0 -6.833193,11.821345 -13.668944,2e-6" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'I': `
+        <path d="m 81.476579,95.051807 c 0,0 6.90554,11.837653 20.503421,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,95.051807 c 0,0 -6.866993,11.837653 -20.503416,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,118.72711 c 0,0 -6.768327,-11.83224 -13.668946,0" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'J': `
+        <path d="m 74.642109,106.88946 c 0,0 13.668941,0.0954 20.503416,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 101.98,106.88946 c 0,0 -13.668024,0.005 -20.503421,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145523,95.051805 c 0,0 -6.833193,11.821345 -13.668944,2e-6" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    'K': `
+        <path d="m 101.98,106.88946 c 0,0 -13.668024,0.005 -20.503421,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145523,95.051805 c 0,0 -6.834524,11.843055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 81.476579,95.051805 c 0,0 6.846943,11.705365 -6.83447,11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    'L': `
+        <path d="m 95.145525,95.051807 c 0,0 -6.866993,11.837653 -20.503416,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 101.98,106.88946 c 0,0 -13.668024,0.005 -20.503421,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 81.476579,95.051807 95.145525,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'M': `
+        <path d="m 74.642109,106.88946 c 0,0 13.668938,0.0504 6.83447,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 101.98,106.88946 c 0,0 -13.668956,-0.0163 -6.834477,-11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 81.476579,95.051807 95.145525,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'N': `
+        <path d="m 81.476579,95.051807 c 0,0 6.90554,11.837653 20.503421,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145523,95.051805 c 0,0 -6.834524,11.843055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 74.642109,106.88946 c 0,0 13.668938,0.0504 6.83447,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'O': `
+        <path d="m 95.145525,95.051807 c 0,0 -6.866993,11.837653 -20.503416,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 81.476579,95.051805 c 0,0 6.835397,11.888055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,118.72711 c 0,0 -6.763403,-11.83765 6.834475,-11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'P': `
+        <path d="m 95.145525,95.051807 c 0,0 -6.866993,11.837653 -20.503416,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 81.476579,95.051805 c 0,0 6.835397,11.888055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,118.72711 c 0,0 -6.763403,-11.83765 6.834475,-11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    'Q': `
+        <path d="m 95.145523,95.051805 c 0,0 -6.834524,11.843055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 81.476579,95.051805 c 0,0 6.835397,11.888055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 74.642109,106.88946 H 101.98" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    'R': `
+        <path d="m 81.476579,95.051807 c 0,0 6.90554,11.837653 20.503421,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 74.642109,106.88946 c 0,0 13.668941,0.0954 20.503416,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 95.145525,95.051807 81.476579,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'S': `
+        <path d="m 101.98,106.88946 c 0,0 -13.668024,0.005 -20.503421,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145523,95.051805 c 0,0 -6.834524,11.843055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 81.476579,95.051805 c 0,0 6.846943,11.705365 -6.83447,11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'T': `
+        <path d="m 74.642109,106.88946 c 0,0 13.668938,0.0504 6.83447,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145523,95.051805 c 0,0 -6.833193,11.821345 -13.668944,2e-6" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,118.72711 c 0,0 -6.763403,-11.83765 6.834475,-11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'U': `
+        <path d="m 95.145525,118.72711 c 0,0 -6.768327,-11.83224 -13.668946,0" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145523,95.051805 c 0,0 -6.833193,11.821345 -13.668944,2e-6" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 74.642109,106.88946 H 101.98" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'V': `
+        <path d="m 81.476579,95.051807 c 0,0 6.90554,11.837653 20.503421,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145523,95.051805 c 0,0 -6.834524,11.843055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 74.642109,106.88946 c 0,0 13.668938,0.0504 6.83447,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    'W': `
+        <path d="M 95.145525,95.051807 81.476579,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 74.642109,106.88946 H 101.98" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 81.476579,95.051807 95.145525,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="1.5" fill="var(--ink-line)"/>
+    `,
+    'X': `
+        <path d="m 81.476579,95.051807 c 0,0 6.90554,11.837653 20.503421,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 74.642109,106.88946 c 0,0 13.668941,0.0954 20.503416,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 95.145525,95.051807 81.476579,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    'Y': `
+        <path d="m 74.642109,106.88946 c 0,0 13.668941,0.0954 20.503416,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 81.476579,95.051805 c 0,0 6.835397,11.888055 0,23.675305" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 101.98,106.88946 c 0,0 -13.668956,-0.0163 -6.834477,-11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    'Z': `
+        <path d="m 95.145525,95.051807 c 0,0 -6.866993,11.837653 -20.503416,11.837653" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 101.98,106.88946 c 0,0 -13.668024,0.005 -20.503421,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 81.476579,95.051807 95.145525,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    '.': `
+        <path d="m 81.476579,95.051805 c 0,0 6.846943,11.705365 -6.83447,11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145525,118.72711 c 0,0 -6.763403,-11.83765 6.834475,-11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 95.145525,95.051807 81.476579,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    ',': `
+        <path d="m 95.145525,118.72711 c 0,0 -6.768327,-11.83224 -13.668946,0" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 95.145523,95.051805 c 0,0 -6.833193,11.821345 -13.668944,2e-6" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 74.642109,106.88946 H 101.98" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    '\'': `
+        <path d="m 74.642109,106.88946 c 0,0 13.668938,0.0504 6.83447,11.83765" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="m 101.98,106.88946 c 0,0 -13.668956,-0.0163 -6.834477,-11.837655" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 81.476579,95.051807 95.145525,118.72711" fill="none" stroke="var(--ink-line)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="88.311058" cy="106.88946" r="2.5" fill="var(--ink-line)"/>
+    `,
+    // Apply this exact same cleaning process to 'B', 'C', etc.
+  };
+
+  function hexKey(h){ return h.q+','+h.r; }
+
+  // ---- true contiguous outward hex spiral (non self-overlapping walk) ----
+  function walkSpiral(n){
+    const path = [{q:0,r:0}];
+    if (n<=1) return path.slice(0,Math.max(n,0));
+
+    let cur = {q:0, r:0};
+    let radius = 1;
+
+    // The correct clockwise directional sequence to wrap around the center
+    // Maps to: Bottom-Right, Bottom-Left, Left, Top-Left, Top-Right, Right
+    const clockWiseOrder = [5, 4, 3, 2, 1, 0];
+
+    while (path.length < n) {
+      // Step outward to the Right (0) to begin the next concentric ring.
+      // Because the previous ring correctly stops 1 cell short of a full loop,
+      // this step shifts exactly into the blue arrow position without gaps.
+      cur = { q: cur.q + DIRS[0].q, r: cur.r + DIRS[0].r };
+      path.push(cur);
+
+      // Trace along all 6 sides of the current ring
+      for (let d = 0; d < 6; d++) {
+        const dirIndex = clockWiseOrder[d];
+        
+        // The crucial mathematical fix: the first side must be 1 step shorter
+        // to prevent the ring from closing on itself.
+        const steps = (d === 0) ? radius - 1 : radius;
+
+        for (let i = 0; i < steps; i++) {
+          if (path.length >= n) return path;
+          cur = { q: cur.q + DIRS[dirIndex].q, r: cur.r + DIRS[dirIndex].r };
+          path.push(cur);
+        }
+      }
+      radius++; // Expand the hexagon bounds for the next iteration
+    }
+    return path;
+  }
+
+  function hexToPixel(h){
+    return { x: SIZE*(SQRT3*h.q + SQRT3/2*h.r), y: SIZE*(1.5*h.r) };
+  }
+  function hexCorners(h){
+    const c = hexToPixel(h);
+    const pts = [];
+    for (let i=0;i<6;i++){
+      const ang = Math.PI/180*(60*i-30);
+      pts.push({x:c.x+SIZE*Math.cos(ang), y:c.y+SIZE*Math.sin(ang)});
+    }
+    return pts;
+  }
+  function edgeMid(corners, e){
+    const a = corners[e], b = corners[(e+1)%6];
+    return {x:(a.x+b.x)/2, y:(a.y+b.y)/2};
+  }
+
+  // ---- parse input text into placeable symbols ----
+  function parseText(raw){
+    const out = [{char:'#', spaceBefore:false}];
+    let pendingSpace = false;
+    for (const ch of raw){
+      if (/\s/.test(ch)){ pendingSpace = out.length>1; continue; }
+      const up = ch.toUpperCase();
+      if (SYMBOLS.indexOf(up) === -1 || up==='#') continue; // unsupported / reserved
+      out.push({char:up, spaceBefore:pendingSpace});
+      pendingSpace = false;
+    }
+    return out;
+  }
+
+  // ---- boundary tracing for the union shape, to find concave corners ----
+  function roundPt(p){ return Math.round(p.x*100)/100+','+Math.round(p.y*100)/100; }
+  function edgeId(a,b){ const ka=roundPt(a), kb=roundPt(b); return ka<kb? ka+'|'+kb : kb+'|'+ka; }
+
+  function boundaryLoops(usedSet, cornersCache){
+    const segs = [];
+    for (const key of usedSet){
+      const [q,r] = key.split(',').map(Number);
+      const h = {q,r};
+      const corners = cornersCache.get(key);
+      for (let d=0; d<6; d++){
+        const nbKey = (h.q+DIRS[d].q)+','+(h.r+DIRS[d].r);
+        if (!usedSet.has(nbKey)){
+          const e = DIR_TO_EDGE[d];
+          segs.push([corners[e], corners[(e+1)%6]]);
+        }
+      }
+    }
+    const adj = new Map();
+    function add(a,b){
+      const k = roundPt(a);
+      if (!adj.has(k)) adj.set(k, []);
+      adj.get(k).push(b);
+    }
+    for (const [a,b] of segs){ add(a,b); add(b,a); }
+
+    const visited = new Set();
+    const loops = [];
+    for (const [a,b] of segs){
+      if (visited.has(edgeId(a,b))) continue;
+      const loop = [a];
+      visited.add(edgeId(a,b));
+      let cur = b;
+      let guard = 0;
+      while (roundPt(cur) !== roundPt(a) && guard < 5000){
+        loop.push(cur);
+        const neighbors = adj.get(roundPt(cur)) || [];
+        let next = null;
+        for (const nb of neighbors){
+          if (!visited.has(edgeId(cur, nb))){ next = nb; break; }
+        }
+        if (!next) break;
+        visited.add(edgeId(cur, next));
+        cur = next;
+        guard++;
+      }
+      if (loop.length >= 3) loops.push(loop);
+    }
+    return loops;
+  }
+
+  function signedArea(loop){
+    let a=0;
+    for (let i=0;i<loop.length;i++){
+      const p1=loop[i], p2=loop[(i+1)%loop.length];
+      a += p1.x*p2.y - p2.x*p1.y;
+    }
+    return a/2;
+  }
+
+  function concaveVertices(loop){
+    const n = loop.length;
+    const ccw = signedArea(loop) > 0;
+    const out = [];
+    for (let i=0;i<n;i++){
+      const p0=loop[(i-1+n)%n], p1=loop[i], p2=loop[(i+1)%n];
+      const cross = (p1.x-p0.x)*(p2.y-p1.y) - (p1.y-p0.y)*(p2.x-p1.x);
+      const concave = ccw ? cross < -1e-6 : cross > 1e-6;
+      // We now push the neighboring points alongside the vertex
+      if (concave) out.push({ v: p1, p0: p0, p2: p2 });
+    }
+    return out;
+  }
+
+  // ---- tile glyph geometry: chord edge pair for a symbol ----
+  function tileEdges(symbol){
+    const idx = SYMBOLS.indexOf(symbol);
+    const a = idx % 6;
+    const offset = 1 + Math.floor(idx/6);
+    const b = (a+offset) % 6;
+    return [a,b];
+  }
+
+  function tileSVG(cx, cy, corners, center, symbol, showLabel){
+    let s = '';
+    
+    // Step 1: Calculate the scale factor
+    const scaleFactor = SIZE / SVG_HEX_RADIUS;
+
+    // Step 2: Calculate the scaled translation offsets
+    const offsetX = center.x - (SVG_CENTER_X * scaleFactor);
+    const offsetY = center.y - (SVG_CENTER_Y * scaleFactor);
+
+    // Step 3: Apply both translate and scale to the transformation matrix
+    s += `<g transform="translate(${offsetX.toFixed(4)}, ${offsetY.toFixed(4)}) scale(${scaleFactor.toFixed(4)})">`;
+    
+    if (customGlyphs[symbol]) {
+        s += customGlyphs[symbol];
+    } else {
+        s += `<circle cx="${SVG_CENTER_X}" cy="${SVG_CENTER_Y}" r="${2 / scaleFactor}" fill="var(--ink-line-dim)"/>`;
+    }
+    
+    s += `</g>`;
+
+    if (showLabel){
+      s += `<text x="${center.x.toFixed(2)}" y="${(center.y - SIZE*0.55).toFixed(2)}" font-family="JetBrains Mono, monospace" font-size="${SIZE*0.42}" fill="var(--accent)" text-anchor="middle">${symbol==='#'?'#':symbol}</text>`;
+    }
+    
+    return s;
+  }
+
+  function hexOutlinePath(corners){
+    return 'M '+corners.map(p=>p.x.toFixed(2)+' '+p.y.toFixed(2)).join(' L ')+' Z';
+  }
+
+  // ---- main render ----
+  function render(){
+    const raw = document.getElementById('text').value;
+    const symbols = parseText(raw);
+    const n = symbols.length;
+    const showConstruction = false;
+
+    document.getElementById('charcount').textContent = raw.length + ' / 240';
+    document.getElementById('cellcount').textContent = n + ' cell' + (n===1?'':'s');
+
+    const path = walkSpiral(n);
+    const usedSet = new Set(path.map(hexKey));
+    const cornersCache = new Map();
+    for (const h of path) cornersCache.set(hexKey(h), hexCorners(h));
+
+    // bounding box
+    let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+    for (const key of usedSet){
+      for (const c of cornersCache.get(key)){
+        minX=Math.min(minX,c.x); maxX=Math.max(maxX,c.x);
+        minY=Math.min(minY,c.y); maxY=Math.max(maxY,c.y);
+      }
+    }
+    if (!isFinite(minX)){ minX=minY=-SIZE; maxX=maxY=SIZE; }
+    const pad = SIZE*0.8;
+    minX-=pad; minY-=pad; maxX+=pad; maxY+=pad;
+    const vw = maxX-minX, vh = maxY-minY;
+
+    let svg = '';
+
+    // construction: hex grid outlines
+    if (showConstruction){
+      for (const h of path){
+        const corners = cornersCache.get(hexKey(h));
+        svg += `<path d="${hexOutlinePath(corners)}" fill="none" stroke="var(--paper-faint)" stroke-width="1"/>`;
+      }
+    }
+
+    // turn / space bars, computed between consecutive path cells
+    for (let i=0;i<path.length-1;i++){
+      const c1 = hexToPixel(path[i]);
+      const c2 = hexToPixel(path[i+1]);
+      const mid = {x:(c1.x+c2.x)/2, y:(c1.y+c2.y)/2};
+      const dx = c2.x-c1.x, dy = c2.y-c1.y;
+      const len = Math.hypot(dx,dy) || 1;
+      const px = -dy/len, py = dx/len; // perpendicular unit vector
+
+      let isTurn = false;
+      if (i>0 && i<path.length-1){
+        const prev = path[i-1], cur = path[i], next = path[i+1];
+        const d1 = {q:cur.q-prev.q, r:cur.r-prev.r};
+        const d2 = {q:next.q-cur.q, r:next.r-cur.r};
+        isTurn = (d1.q!==d2.q || d1.r!==d2.r);
+      }
+      const isSpace = symbols[i+1] ? symbols[i+1].spaceBefore : false;
+
+      if (isTurn){
+        const len1 = SIZE*0.22;
+        svg += `<line x1="${(mid.x-px*len1).toFixed(2)}" y1="${(mid.y-py*len1).toFixed(2)}" x2="${(mid.x+px*len1).toFixed(2)}" y2="${(mid.y+py*len1).toFixed(2)}" stroke="${showConstruction?'var(--accent)':'var(--ink-line-dim)'}" stroke-width="1.5"/>`;
+      }
+      if (isSpace){
+        const len2 = SIZE*0.42;
+        svg += `<line x1="${(mid.x-px*len2).toFixed(2)}" y1="${(mid.y-py*len2).toFixed(2)}" x2="${(mid.x+px*len2).toFixed(2)}" y2="${(mid.y+py*len2).toFixed(2)}" stroke="${showConstruction?'var(--accent)':'var(--ink-line)'}" stroke-width="2"/>`;
+      }
+    }
+
+    // tiles
+    path.forEach((h,i)=>{
+      const center = hexToPixel(h);
+      const corners = cornersCache.get(hexKey(h));
+      const symbol = symbols[i] ? symbols[i].char : '#';
+      svg += tileSVG(center.x, center.y, corners, center, symbol, showConstruction);
+    });
+
+    // concave corners of the union shape's perimeter
+    if (usedSet.size >= 2){
+      const loops = boundaryLoops(usedSet, cornersCache);
+      for (const loop of loops){
+        const cc = concaveVertices(loop);
+        for (const item of cc){
+          const v = item.v;
+          
+          // Calculate the exact directional vectors along the boundary edges
+          const dx0 = item.p0.x - v.x, dy0 = item.p0.y - v.y;
+          const dx2 = item.p2.x - v.x, dy2 = item.p2.y - v.y;
+          
+          const a0 = Math.atan2(dy0, dx0);
+          const a2 = Math.atan2(dy2, dx2);
+          
+          // Radius of the curve spanning the empty space
+          const r = SIZE * 0.5; 
+          
+          const startX = v.x + r * Math.cos(a0);
+          const startY = v.y + r * Math.sin(a0);
+          const endX = v.x + r * Math.cos(a2);
+          const endY = v.y + r * Math.sin(a2);
+
+          // Use the cross product to determine if the SVG arc should sweep 
+          // clockwise (1) or counter-clockwise (0)
+          const Z = dx0 * dy2 - dy0 * dx2;
+          const sweep = Z > 0 ? 1 : 0;
+
+          // Render the curved arc path instead of a full circle
+          svg += `<path d="M ${startX.toFixed(2)} ${startY.toFixed(2)} A ${r.toFixed(2)} ${r.toFixed(2)} 0 0 ${sweep} ${endX.toFixed(2)} ${endY.toFixed(2)}" fill="none" stroke="${showConstruction?'var(--accent)':'var(--ink-line)'}" stroke-width="2" stroke-linecap="round"/>`;
+        }
+      }
+    }
+
+    const svgEl = document.getElementById('svg');
+    svgEl.setAttribute('viewBox', `${minX.toFixed(2)} ${minY.toFixed(2)} ${vw.toFixed(2)} ${vh.toFixed(2)}`);
+    svgEl.innerHTML = svg;
+  }
+
+  // ---- legend ----
+
+  document.getElementById('text').addEventListener('input', render);
+  document.getElementById('download').addEventListener('click', function(){
+    const svgEl = document.getElementById('svg');
+    const serializer = new XMLSerializer();
+    let src = serializer.serializeToString(svgEl);
+    const styleVars = `<style>:root{--ink-line:#ece6d8;--ink-line-dim:#ece6d84a;--accent:#b8483e;--paper-faint:#ece6d81a;}</style>`;
+    src = src.replace('</svg>', styleVars+'</svg>');
+    src = `<?xml version="1.0" standalone="no"?>\r\n` + src;
+    const blob = new Blob([src], {type:'image/svg+xml;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'spiralwrit.svg';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  render();
+})();
+</script>
+</body>
+</html>
