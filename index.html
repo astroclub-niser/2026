@@ -495,7 +495,7 @@ footer
                         <button type="button" id="btnLogin">Login</button>
                     </div>
                 </div>
-                <form id="regis" action="https://script.google.com/macros/s/AKfycbxEZ10sIhba0ts2QBxU75WMX2zoGTF-Yz4Qvi5gggRc_Zh4OrpTE4hwr5GiDDV1cjJFBw/exec" method="post">
+                <form id="regis" action="https://script.google.com/macros/s/AKfycbw9uAOTF_kugSlesHv4y9f12TSVv2lkFlnpGuXRt8pixmtRolvD2dxmizU5JP-mPhg3qQ/exec" method="post">
                     <div id="regisclose" class="hidden">Registration closed</div>
                     <div class="field">
                         <label>Team name<span class="req">*</span></label>
@@ -530,7 +530,7 @@ footer
                     </div>
                     <button type="submit">Register team</button>
                 </form>
-                <form id="login" class="hidden" action="https://script.google.com/macros/s/AKfycbxEZ10sIhba0ts2QBxU75WMX2zoGTF-Yz4Qvi5gggRc_Zh4OrpTE4hwr5GiDDV1cjJFBw/exec" method="get">
+                <form id="login" class="hidden" action="https://script.google.com/macros/s/AKfycbw9uAOTF_kugSlesHv4y9f12TSVv2lkFlnpGuXRt8pixmtRolvD2dxmizU5JP-mPhg3qQ/exec" method="get">
                     <div id="countdown" class="lock-countdown">
                         <div class="divider-label">Check-in opens</div>
                         <div class="clock" id="clockdis">
@@ -586,7 +586,7 @@ function showLogin()
 }
 btnRegister.addEventListener('click',showRegister);
 btnLogin.addEventListener('click',showLogin);
-const unlocklogin=new Date('2026-08-16T22:55:00');
+const unlocklogin=new Date('2026-08-16T23:00:00');
 const countdown=document.getElementById('countdown');
 const feilds=document.getElementById('feilds');
 const namelogin=login.querySelector('input[name="loginname"]');
