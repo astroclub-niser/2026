@@ -690,7 +690,7 @@ footer
             clearInterval(deadlineTimer);
             deadlineTimer=null;
         }
-        deadlineLabel.textContent='Answers closed';
+        deadlineLabel.textContent='Answering closed';
         deadlineClock.textContent='Answer window closed';
         lockForm();
     }
@@ -707,12 +707,12 @@ footer
         const now=Date.now();
         if(now<ansstart.getTime())
         {
-            deadlineLabel.textContent='Answers open in';
+            deadlineLabel.textContent='Answering open in';
             renderCountdown(ansstart.getTime()-now);
             if(!form.classList.contains('locked'))
             {
                 lockForm();
-                setStatus('Answers aren\'t open yet — come back at '+ansstart.toLocaleString()+'.','');
+                setStatus('Answering aren\'t open yet — come back at '+ansstart.toLocaleString()+'.','');
             }
             return;
         }
@@ -726,7 +726,7 @@ footer
             unlockForm();
             setStatus('','');
         }
-        deadlineLabel.textContent='Answers close';
+        deadlineLabel.textContent='Answering close';
         renderCountdown(ansdead.getTime()-now);
     }
     tickWindow();
@@ -770,7 +770,7 @@ footer
         }
         if(Date.now()<ansstart.getTime())
         {
-            setStatus('Answers aren\'t open yet — come back at '+ansstart.toLocaleString()+'.','err');
+            setStatus('Answering aren\'t open yet — come back at '+ansstart.toLocaleString()+'.','err');
             return;
         }
         const btn=form.querySelector('button[type="submit"]');
