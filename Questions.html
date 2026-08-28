@@ -23,11 +23,11 @@
     --radius:2px;
 }
 *{
-        box-sizing:border-box;
+    box-sizing:border-box;
 }
 html
 {
-        scroll-behavior:smooth;
+    scroll-behavior:smooth;
 }
 body
 {
@@ -499,7 +499,7 @@ footer
             <span id="teamChipText">Loading team…</span>
         </div>
         <div class="deadline-badge">
-            <span class="deadline-label">Answers close 28 Aug</span>
+            <span class="deadline-label" id="deadlineLabel">Answers close 28 Aug</span>
             <div class="clock" id="deadlineClock">
                 <div class="clock-unit"><span id="ddDays">00</span><small>Days</small></div>
                 <div class="clock-unit"><span id="ddHours">00</span><small>Hrs</small></div>
@@ -520,42 +520,93 @@ footer
                         <span class="progress-count" id="progressCount">0 / 9</span>
                     </div>
                 </div>
-                <form id="questions" action="https://script.google.com/macros/s/AKfycbztCpqSPbH5AXpNKr7lCHNGRBwqJXlu9-pI0PGHPGTzG1gNaogMCptrV4nL6llumW6b/exec" method="post">
+                <form id="questions" action="https://script.google.com/macros/s/AKfycbxQil_yC_AZhDQXmYHLh84HEQgYQvQv4I6Iyl5uUW-TAvs6irzi8iFHPRwDV7FXwcnI/exec" method="post">
                     <div class="qfield">
-                        <div class="qtag"><span class="num">Q1</span><span class="qtext">What is the capital of France?</span></div>
+                        <div class="qtag"><span class="num">Q1</span><span class="qtext">Product of infidelity, cursed for neutrality.</span></div>
                         <input type="text" name="question1" placeholder="Your answer" autocomplete="off">
                     </div>
                     <div class="qfield">
-                        <div class="qtag"><span class="num">Q2</span><span class="qtext">What is 2 + 2?</span></div>
+                        <div class="qtag"><span class="num">Q2</span><span class="qtext">Brown's discovery, already been engaged, have two sons and a very different shape.</span></div>
                         <input type="text" name="question2" placeholder="Your answer" autocomplete="off">
                     </div>
                     <div class="qfield">
-                        <div class="qtag"><span class="num">Q3</span><span class="qtext">What is the largest planet in our solar system?</span></div>
+                        <div class="qtag"><span class="num">Q3</span><span class="qtext">Being arrested was my medal, Had a week which world remembered, But some <strong>ratio</strong> inhibits my discovery, My lover's wife have visited me for his misery. Tell the ratio.</span></div>
                         <input type="text" name="question3" placeholder="Your answer" autocomplete="off">
                     </div>
                     <div class="qfield">
-                        <div class="qtag"><span class="num">Q4</span><span class="qtext">Who wrote 'To Kill a Mockingbird'?</span></div>
+                        <div class="qtag"><span class="num">Q4</span><span class="qtext">An assistant turned rogue, with a credit theft case, Some info with revolution, And some of it's pace.</span></div>
                         <input type="text" name="question4" placeholder="Your answer" autocomplete="off">
                     </div>
                     <div class="qfield">
-                        <div class="qtag"><span class="num">Q5</span><span class="qtext">What is the boiling point of water in Celsius?</span></div>
+                        <div class="qtag"><span class="num">Q5</span><span class="qtext">Reminiscence of creation, being there forever, defeating absolute zero, can't deny me never ever.</span></div>
                         <input type="text" name="question5" placeholder="Your answer" autocomplete="off">
                     </div>
                     <div class="qfield">
-                        <div class="qtag"><span class="num">Q6</span><span class="qtext">What is the chemical symbol for gold?</span></div>
+                        <div class="qtag"><span class="num">Q6</span><span class="qtext">A family of six, in the neighborhood, Might have life, but the flares withstood.</span></div>
                         <input type="text" name="question6" placeholder="Your answer" autocomplete="off">
                     </div>
                     <div class="qfield">
-                        <div class="qtag"><span class="num">Q7</span><span class="qtext">What is the speed of light in vacuum (in m/s)?</span></div>
+                        <div class="qtag"><span class="num">Q7</span><span class="qtext">My acquaintance always guides you right, Astronomers always needs it's sight. I'm also there but rarely mentioned, But I'm very close to my guiding light.</span></div>
                         <input type="text" name="question7" placeholder="Your answer" autocomplete="off">
                     </div>
                     <div class="qfield">
-                        <div class="qtag"><span class="num">Q8</span><span class="qtext">Who painted the Mona Lisa?</span></div>
+                        <div class="qtag"><span class="num">Q8</span><span class="qtext">Replaced by modern tools before the dawn of AI, I guided salty wanderers beneath an open sky, found on the symbol of flat Earther's nightmare, can you name me, will you try?</span></div>
                         <input type="text" name="question8" placeholder="Your answer" autocomplete="off">
                     </div>
                     <div class="qfield">
-                        <div class="qtag"><span class="num">Q9</span><span class="qtext">What is the largest ocean on Earth?</span></div>
+                        <div class="qtag"><span class="num">Q9</span><span class="qtext">"Qué pensarán de mi sombrero...?" Pablo Neruda</span></div>
                         <input type="text" name="question9" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q10</span><span class="qtext">13.8 billion years after the Big Bang, there existed a strange little settlement, where the paths and buildings seemed to have appeared in a very particular order.<br><br>At one end stood a structure where the chemists could always be found, busy with their mysterious mixtures and reactions. Just beside them lived the flat earthies, who were concerned with things that breathed, grew, reproduced, and somehow managed to call themselves alive.<br><br>A little farther along, on the right side, stood the P-hysics block, where people spent their days worrying about forces, motion, energy, and everything that governed the world around them. And immediately to its right lived the nobleties— people who seemed to care less about what the world was made of and more about the rules that could describe it.<br><br>But between all these places, right in the centre of the settlement, stood a broad structure unlike the others.<br><br>Every year, people from the outside world arrived at this gate (gate 1). They entered through its doors in batches, one after another, and the settlement slowly filled with new faces. This continued for years, until Batch 26 became the latest group to fuse there.<br><br>The old way had fused them twenty-six batches.<br><br>Yet strangely, in front of this broad structure stood an auditorium.<br>People existed there too.<br>They were not empty seats, nor were they merely visitors passing through. They belonged to the settlement just as the others did. But they had not arrived through the same conventional process as those inside the central structure. Their origins were different, their paths were different, and yet somehow they had found themselves among the same people.<br><br>How can they exist?
+                        </span></div>
+                        <input type="text" name="question10" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q11</span><span class="qtext"><i>Tall Famous Friend</i><br><br>There was once a man whose eyes were pale blue.<br><br>But that were so famous that people sometimes said that blue eyes were result of the blue sky.<br><br>Wherever he went, those eyes followed him like two silent oceans.<br><br>But the man was not alone.<br><br>He had a white best friend—a man whose life was far more complicated than his own. For reasons known only to fate, this friend had twenty-seven wives.<br><br><i>Twenty-seven.</i><br><br>Some loved him. Some feared him. Some merely tolerated the strange circumstances that had brought them together. Yet among all of them, there was one wife who was different.<br><br>She loved fish.<br><br>Not merely as food, nor as something to admire from a distance. She loved fish with an almost inexplicable devotion. Rivers, oceans, ponds—wherever there was water, her attention seemed to follow.<br><br>But then, something happened.<br><br>Something that would eventually become infamous.<br><br>She became involved in an affair.<br><br>And the person at the centre of this affair was no ordinary man.<br><br>He was a person whose engagement was famous—an engagement so well known that his name seemed inseparable from it. Wherever people spoke of him, sooner or later, they spoke of that remarkable engagement.<br><br>Yet there was another quality that made him stand apart.<br><br>He possessed extraordinary social skills.<br><br>He could enter a room of strangers and leave it surrounded by friends. He knew how to speak, when to listen, when to charm, and when to remain silent. People naturally gathered around him.<br><br>But even such a man had someone particularly close to him.<br><br>One friend.<br><br>A friend who stood out among all the others.<br><br>Not because of his wealth.<br><br>Not because of his fame.<br><br>Not because of his intelligence.<br><br>But because he was taller than all of his friends.<br><br>And so the chain stood:<br><br>The man with the impossibly dark blue eyes.<br><br>His best friend with twenty-seven wives.<br><br>The wife who loved fish.<br><br>Her infamous affair.<br><br>The man with the famous engagement.<br><br>His remarkable social skills.<br><br>And finally—<br><br>the friend who stood taller than them all.<br><br>These people were connected somehow but it doesn't matter 'cause the real question is who was that tall famous friend? Can you guess!!!!
+                        </span></div>
+                        <input type="text" name="question11" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q12</span><span class="qtext">A guy Fritz Parker<br>he thinks he is the great no one like him is in pandemic year online 2nd position<br>bro thinks he is like a rising dawn sun tearing<br>watching big bang theory with morning bread omelette<br>There was a guy called Fritz Parker, he thinks he was a new age genius rising like a dawn sun tearing apart the boundary between sea and sky<br>also according to bro, no great person can surpass the glory of him as if he is alone in the universe. Watching Big Bang theory with scrambled egg rice is his comfort zone.<br>Apparently, he was the second position holder in the pandemic year physics olympiad.<br><br>What should catch his eye?
+                        </span></div>
+                        <input type="text" name="question12" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q13</span><span class="qtext">The Riddle of Arrakis<br>A stone falls on Earth and lands in twenty seconds flat. On the far desert world of Arrakis, the same stone dropped from the same height takes four seconds longer to land — twenty-four seconds in all. Arrakis, it turns out, has exactly the same mass as Earth; only its radius is different, and that difference alone explains the slower fall.<br>The ratio of Arrakis's radius to Earth's radius, then square it, and multiply the result by the mass of the Sun. What you get is a number the universe already has a name for. Before you calculate it — take a guess at what that famous number might be.
+                        </span></div>
+                        <input type="text" name="question13" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q14</span><span class="qtext">It was there but forbidden, smoother but ignorant<br>It happened but no one to see<br>lucky me , I was there who make the visual free, who am I?
+                        </span></div>
+                        <input type="text" name="question14" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q15</span><span class="qtext">A few years back... Around 1971, Homo sapiens first saw my species—though I don't remember my exact name, as it's been a long time (to be honest, I know... but why the heck would I reveal the answer lol). Every time I try to revolve around my same species or a smol boi, I generate some things which you can only hear.<br><br>A lot of humans constantly try to understand me but haven't gotten much farther.<br><br>So the story begins with a boy in 1970, Bihar, India, who aspires to become an astrophysicist and is interested in planetary motions. When he finds a book, "Astronomia nova", he spends his 2 years of high school studying it and gets into a Good Indian Institute, although the college choice of his could've been nicer! If he had studied for what is a chair and what is a table? But once he gets into the college, he studies general relativity in his 3rd year and finds a girl to love and spend his time with. This is the reason he fails the next semester too.<br><br>In his life, he now finds 2 new problems: thinking about a girl and having nightmares that Stephen might discover the single thing he loves and take it away from him. The logic is not present in both the cases. Take these physics equations or the love for his girl—I mean, for the girl case, he's just stupid, but for the physics equations, he could've just studied...<br><br>Although, at the end, he puts up his feelings, locks them up, and stays Single. Will the physics prevail?<br><br>If physics did prevail, what would he finally understand... What is the one thing that stays Single, yet lies at the heart of it all?
+                        </span></div>
+                        <input type="text" name="question15" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q16</span><span class="qtext">Being colossal or compact makes me happen,<br>The path of me takes you literal heaven,<br>Dr. Banner fears me even,<br>Can you guess what my label.
+                        </span></div>
+                        <input type="text" name="question16" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q17</span><span class="qtext">A wanderer falls into a dungeon trap inside he finds the following inscription:<br>As Aleph and Beth ingress, affirmation through dissonance egresses. Quadity of such is the sixth son of the eighth daughter of the fourth king of the seventh country as you traverse the lands of the Icey sands.<br>Aleph:<br>10010100 00001111 01011001 00000001 00100111 00011010 10001001 00001110 00111011 01110101 11111001 01011111 00001100 01000010 11000001 10111101 00010101 01011100 00011111 11100001 11100011 11101000<br>01010000 00010110 00110110 00100111 00110001 00101101 00101000 01000010 10101101 10011000 11100010 10100111 10111101 10000000 01111101 00111000 10001011 10001000 00101000 00111001 01101100 11100010 11001100 00010011 00001001 11110111 00110100 11011000 00110010 01010100 11001111 01111110 00000101 11011100 00111100 01111111 00111010 11001000 10001110 00010110<br>10110100 11011001 00110001 00011000 01111001 00010011 01101111 01011110 01110100 10111111 10111011 01100111 00100101 10101101 10000001 11000000 00100001 11010100 11001100 10010011 01011010 11000000 11011001 00010111 01001010 11000110 01000101 11010011 00111100 10010101<br>10001011 10101010 01111110 10100011 10100101 00001110 11100100 01000001 01010001 11011111 01010101 10100100 00101100 10000110 10100010 11001101 00011011 00010000 10001011 00111001 00100011 00110111 00011000 11010011 11000000 01000011 11011101<br>01110000 00110110 00101000 11000111 01010110 01110000 11011001 11111100 01010011 01010000 00111111 00111000 01011101 00100110 01111001 10100010 10110110 10111101 01010011 01011101 11011101 11010001 01000011 11110101 11111001 10100010 01110110 10110001 10010010 00010011<br>10110001 01011101 10000011 01110000 11111001 10111111 00110000 11111010 11100010 11100100 00010001 00101001 01111010 10010000 01110101 01000111 01001001 01110010 11110011 00011111 10111101 01011011 11000001 01110010 00001001 01110001 00101110 01000100 10010011 10111001 11011111 11100011 11101011<br>01011010 11110101 00000101 10111000 01011101 01000010 00110010 10110101 01100111 00001000 11100111 11011000 01111110 10100100 01000011 01101000 00010101 10110100 00010101 00101111 00111101 00000110 01100100 01111000 01110001 11100000 11010011 10101011 10100001 10110010 01011100 10101010 00111011 01001010 11000100 11111110 11110011 11010011<br>11000010 01010110 11000101 01000000 00111011 10000110 10011101 00010011 11101111 00001110 11100000 01111100 10110101 00110110 10100001 11101010 10001000 10110110 00000100 10010101 10001100 10001100 11000101 01101100 10010000 10011111 00011111 00100000 01001111 00101001 11100110<br>00101111 01011110 11010110 00001101 00010011 01000110 00111010 10011001 01000000 01011001 00010111 10001011 11011011 10001110 00011001 11001100 00000000 11011101 10001100 11010011 10001010 01111001 01011000 11001001 11001110 10010101 11110000 00110000 10011110 11010110 10011101 10001011 00010110 01101110<br>11001000 10000111 10110010 11111101 10001001 01010010 10110001 10110111 11010110 11100100 11011001 11110110 11101101 00111101 10101000 01000110 11110111 00001100 11011001 11011111 11111101 00001000 01001100 01111000 01101111 11111011 00100101 10001001 11010001 00111111 10001000 01100000 10001010 00101000 11100111 10101111 00101111 01010001 00000100 01100101 01000000 11110101 00001110 00000001 00111111 10101000<br>00001001 00010001 01010111 10101011 10010110 00111001 10011000 10100100 01010011 00110111 10110011 01100000 01101110 11111001 10101001 00000001 00010000 10001111 01001011 01011001 00111110 11000110 01110111 00111010 00000001 00101000 11000101 11110010 01110110 11100001 11100001 10101101 11011100 10111011 00010010<br>10111010 10101010 01110000 01000111 11111110 00101101 10110110 01101101 00001011 01000100 00001001 00101001 11100010 00001110 00011011 11001001 00011111 10010101 10100011 10010111 01111110 11001110 10000010 11000011 10010100 01011010 10001011 00001110 10111000 00111010 01001100 00001000 01110101 01000000 01111110 00000111 00110011 01011101<br>11100100 11000011 11011000 00100100 11101001 10011001 01001111 11111010 11001011 11010011 11001100 11100011 10111100 01101001 11100011 01000110 00111101 00111100 11000111 10000001 01001111 11011000 00001000 10100101 11000000 10101001 01101100 01010011 01101111 11101101 00100110 10100001 01010011 10011110 01010111 11111011<br>10000110 11000111 10101101 01010101 10000110 01010111 00000101 01001100 10011111 10011001 11001001 11000000 11001001 11011011 00100110 01011000 10011101 00010000 00110000 01000011 01010111 10111110 11000001 01110111 01000110<br>10110000 01000001 01100001 00101000 00101101 11101000 01101100 10101111 10110001 11011100 01011001 11001111 11111100 01011001 10100111 01110011 10111100 10010110 11010001 01011110 00101110 11011001 11000000 11101001 00001100 01100100 00110000 01001110 01010101 00011000 00111011 10100110 01001111 01011000<br>01000100 01011011 01111101 10110110 10110100 01000100 01111111 10011010 01110110 10001111 00111101 01010110 00100100 00110101 10110101 01000001 00110110 11110001 11001000 01101000 00101000 01101001 10011100 10011100 11101011 11001000 00100001 00111001 10000011 11101000 10111101<br>10001101 01010101 01010010 00101100 10110100 10101010 10111000 10001001 00111011 01110101 11010111 00000001 01001001 10111001 00111100 01001100 11100111 00110111 10110001 11100000 01100101 11101001 01111100 00100111 01010001 10110011 11010110 01001001 01000100 10110101 00101011 10000101<br>10010010 00000011 10000111 11110111 01111101 11101000 01100010 10010011 00000101 10000000 00010110 11000010 01011110 10011011 00001010 01001110 10110100 01100011 11011110 00111001 11011010 11010100 11110000 00000101 01000011 00100100 01100110 10110101<br>Beth:<br>11010010 01100110 00101111 01100100 00000111 01101001 11100110 01100000 01001000 01010101 10010110 00111001 00101100 00100011 11100001 11011011 01110100 00110001 01110110 10001101 10011010 11000100<br>00000100 01100100 01001111 01001110 01011111 01001010 00001000 00110110 11000010 10111000 10010001 11001000 11010001 11110110 00011000 00011000 11101010 10101000 01011001 01001100 00001001 10010001 10111000 01111010 01100110 10011001 00010100 10111110 01011101 00100110 11101111 00011011 01110001 10111001 01001110 00010001 01010011 10111100 11110111 00111010<br>11100101 10101100 01010100 01101011 00001101 01111010 00000000 00110000 01010100 11001101 11011110 00000000 01000100 11011111 11100101 10101001 01001111 10110011 11101100 11100101 00110011 10110100 10111000 01111011 01101010 10110101 00101100 10110100 01010010 10111001<br>11000101 11000101 00001010 10000011 11010110 01100001 11000100 00110010 00111000 10110010 00100101 11001000 01001001 10101010 10000010 10110100 01111110 01100100 10101011 01001010 01001100 00010111 01111110 10111010 10101110 00100110 11110001<br>00100100 01011110 01001101 11100111 00110000 00011001 10101011 10001111 00100111 01110000 01011110 01001100 00101001 01000011 00010100 11010010 11000010 10011101 00110001 00100100 11111101 10111110 00111011 10001100 11010100 11000000 00000100 11011110 11100001 00111111<br>11000101 00110101 11100110 01010000 10001101 11001000 01011111 10001001 11000010 10000101 01111111 01001101 01011010 11100100 00011101 00110101 00101100 00010111 10000000 00111111 11010010 00111101 11100001 00000001 01100110 01010001 01001111 00101010 11110111 10011001 10101100 10001100 11000111<br>00010100 10011010 01110001 10011000 00101001 00101101 01011101 10010101 00010100 01111101 10000100 10111011 00011011 11010111 00110000 00001110 01100000 11011000 00110101 01011011 01010010 00100110 00010111 00010111 00011101 10010110 10110110 10001011 11010101 11011010 00111001 10001010 01001010 00111111 10100001 10001100 10001010 11111111<br>10010001 00111001 11100101 00110111 01011110 10100110 11111010 01111100 10011011 00101110 10010100 00010011 10010101 01011011 11000000 10011000 11111011 11011110 00100100 11110011 11100011 11111110 11100101 00000101 11111110 11101110 01101010 01001001 00111101 01010000 11001010<br>01100111 00111011 11110110 01111010 01110010 00110101 00011010 11101001 00110010 00110110 01100010 11101111 11111011 11101100 01101100 10111000 00100000 10110011 11100011 10100111 10101010 00001010 00110111 11101001 10101011 11110011 10010110 01010101 11111101 10100010 11110100 11111101 01110011 01000010<br>10000100 11100010 11010011 10011001 10101001 00100111 11000010 10010111 10100010 10001011 11111001 10000110 10001100 01001001 11000000 01101010 11010111 01101000 10110110 10111010 10001110 01100110 01101011 00001100 01001111 10010011 01000100 11101101 11110001 01010010 11111101 00000011 11100010 00001000 10010111 11001010 01011101 00100010 01110100 00000000 00100011 10000001 01100111 01110111 01011010 10000100<br>01011101 01111001 00111110 11011001 11110010 00011001 11101111 11000101 00100000 00010111 11011111 00000001 00011011 10011110 11000001 01101000 01111110 11101000 01101011 00110110 01010000 11100110 00000011 01010010 01100100 00001000 10110100 10000111 00010011 10010010 10010101 11000100 10110011 11010101 00111110<br>11111000 11011111 00000100 01100111 10010110 01001000 10010110 00011001 01100100 00101011 00101001 01011110 10000011 01111101 00111011 10100110 01111001 10110101 11001101 11111000 00001010 11101110 11101111 10110110 11110111 00110010 10101011 01100111 11010110 01001001 00111100 01101101 00010110 00110100 00010111 01101000 01011101 01110001<br>10110000 10101011 10111101 00000100 10001111 11110110 00111010 10001000 10111111 10111011 11101100 10001100 11010010 00001100 11000011 00110001 01011100 01001111 11100111 11110101 00100111 10111101 00101000 11011100 10100101 11011101 01001100 00111100 00011010 10011111 00000110 11001001 00111100 11101110 00110010 11010111<br>11001000 10101000 11011001 01110101 11110101 00111000 00100101 00111111 11101010 11101011 10101100 11100000 10100000 10111101 00000110 00110000 11111000 00110111 01011100 00101111 01110111 11001010 10101110 00000111 01101000<br>11100100 00101001 00000100 00001000 01000010 10000110 00001001 10001111 11000110 10110101 00101101 10100111 11011100 00101011 11001000 00000111 11001000 11110011 10111111 01111110 01011110 10101100 10101110 10001110 01101001 00001010 01000100 01101110 00100110 01110101 01011110 11001010 00100011 01110100<br>00001000 00110010 00010110 11010011 10010100 00110000 00010111 11111111 01010110 11111100 01011000 00110111 00000100 01010011 11011010 00101110 01010010 10000010 11101000 00000111 01001110 01001001 11101000 11110100 10001110 11101000 01001001 01011100 11101111 10000100 10010001<br>11001111 00100000 00100110 00001100 11001101 11001111 11001100 10101001 01001111 00011101 10110010 00100001 00100110 11010111 01011001 01101100 10010000 01011111 11011110 11000000 00001000 10001000 00000101 01000101 00110100 10010011 10100100 00100000 00100011 11011101 01011111 10101001<br>11010001 01100010 11101001 11010111 00000100 10000111 00010111 10110011 01100010 11110101 01110011 10110001 00101101 10111011 01111101 00100110 11010101 00010111 11111110 01010000 10101110 11110100 10011101 01101100 00100100 01001100 00010010 10001010
+                        </span></div>
+                        <input type="text" name="question17" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q18</span><span class="qtext">Name the event when the NAC got its "The Junior"?
+                        </span></div>
+                        <input type="text" name="question18" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q19</span><span class="qtext">I am young and being angry feel so right<br>might seem small but will be super bright<br>my twin's photo session started after june 2026.<br>OOps!! I lose my identity. Can you please fix?<br>Who am I?
+
+                        </span></div>
+                        <input type="text" name="question19" placeholder="Your answer" autocomplete="off">
                     </div>
                     <button type="submit">Submit answers</button>
                 </form>
@@ -576,11 +627,13 @@ footer
     const inputs=qfields.map(f=>f.querySelector('input'));
     const teamName=sessionStorage.getItem('teamName');
     const deadlineClock=document.getElementById('deadlineClock');
+    const deadlineLabel=document.getElementById('deadlineLabel');
     const ddDays=document.getElementById('ddDays');
     const ddHours=document.getElementById('ddHours');
     const ddMins=document.getElementById('ddMins');
     const ddSecs=document.getElementById('ddSecs');
-    const ansdead=new Date('2026-08-25T15:00:00');
+    const ansstart=new Date('2026-08-31T00:00:00');
+    const ansdead=new Date('2026-09-01T23:59:59');
     let deadlineTimer=null;
     if(teamName)
     {
@@ -589,7 +642,7 @@ footer
     else
     {
         teamChip.classList.add('warn');
-        teamChipText.innerHTML='No team detected — <a href="index.html">log in first</a>';
+        teamChipText.innerHTML='No team detected — <a href="NAC Tresure Hunt website.html">log in first</a>';
     }
 
     function setStatus(text,kind)
@@ -620,6 +673,16 @@ footer
     }
     inputs.forEach(input=>input.addEventListener('input',updateProgress));
     updateProgress();
+    function lockForm()
+    {
+        form.classList.add('locked');
+        form.querySelector('button[type="submit"]').disabled=true;
+    }
+    function unlockForm()
+    {
+        form.classList.remove('locked');
+        form.querySelector('button[type="submit"]').disabled=false;
+    }
     function closeAnswerWindow()
     {
         if(deadlineTimer)
@@ -627,33 +690,47 @@ footer
             clearInterval(deadlineTimer);
             deadlineTimer=null;
         }
+        deadlineLabel.textContent='Answers closed';
         deadlineClock.textContent='Answer window closed';
-        form.classList.add('locked');
-        form.querySelector('button[type="submit"]').disabled=true;
+        lockForm();
     }
-    function tickDeadline()
+    function renderCountdown(diffMs)
     {
-        const diff=ansdead.getTime()-Date.now();
-        if(diff<=0)
-        {
-            closeAnswerWindow();
-            return;
-        }
-        const totalSecs=Math.floor(diff/1000);
+        const totalSecs=Math.max(0,Math.floor(diffMs/1000));
         ddDays.textContent=pad(Math.floor(totalSecs/86400));
         ddHours.textContent=pad(Math.floor((totalSecs%86400)/3600));
         ddMins.textContent=pad(Math.floor((totalSecs%3600)/60));
         ddSecs.textContent=pad(totalSecs%60);
     }
-    if(Date.now()>=ansdead.getTime())
+    function tickWindow()
     {
-        closeAnswerWindow();
+        const now=Date.now();
+        if(now<ansstart.getTime())
+        {
+            deadlineLabel.textContent='Answers open in';
+            renderCountdown(ansstart.getTime()-now);
+            if(!form.classList.contains('locked'))
+            {
+                lockForm();
+                setStatus('Answers aren\'t open yet — come back at '+ansstart.toLocaleString()+'.','');
+            }
+            return;
+        }
+        if(now>=ansdead.getTime())
+        {
+            closeAnswerWindow();
+            return;
+        }
+        if(form.classList.contains('locked'))
+        {
+            unlockForm();
+            setStatus('','');
+        }
+        deadlineLabel.textContent='Answers close';
+        renderCountdown(ansdead.getTime()-now);
     }
-    else
-    {
-        tickDeadline();
-        deadlineTimer=setInterval(tickDeadline,1000);
-    }
+    tickWindow();
+    deadlineTimer=setInterval(tickWindow,1000);
     if(teamName)
     {
         setStatus('Loading your saved answers…','');
@@ -691,6 +768,11 @@ footer
             setStatus('Log in with your team before submitting.','err');
             return;
         }
+        if(Date.now()<ansstart.getTime())
+        {
+            setStatus('Answers aren\'t open yet — come back at '+ansstart.toLocaleString()+'.','err');
+            return;
+        }
         const btn=form.querySelector('button[type="submit"]');
         btn.disabled=true;
         setStatus('Submitting…','');
@@ -702,14 +784,18 @@ footer
                 {
                     setStatus(data.updated?'Answers updated. You can keep editing until the deadline.':'Answers submitted successfully.','ok');
                     btn.disabled=false;
-                    form.reset();
                 }
                 else
                 {
                     setStatus('Error: '+(data.error || data.message),'err');
-                    if((data.error || '').toLowerCase().includes('closed'))
+                    const errLower=(data.error || '').toLowerCase();
+                    if(errLower.includes('closed'))
                     {
                         closeAnswerWindow();
+                    }
+                    else if(errLower.includes('not open') || errLower.includes('opened yet'))
+                    {
+                        lockForm();
                     }
                     else
                     {
