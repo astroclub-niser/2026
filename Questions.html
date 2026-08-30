@@ -604,9 +604,13 @@ footer
                     </div>
                     <div class="qfield">
                         <div class="qtag"><span class="num">Q19</span><span class="qtext">I am young and being angry feel so right<br>might seem small but will be super bright<br>my twin's photo session started after june 2026.<br>OOps!! I lose my identity. Can you please fix?<br>Who am I?
-
                         </span></div>
                         <input type="text" name="question19" placeholder="Your answer" autocomplete="off">
+                    </div>
+                    <div class="qfield">
+                        <div class="qtag"><span class="num">Q20</span><span class="qtext">A cosmic anomaly, and a great centre,<br><br>High concentration, in very famous cluster,<br><br>Calling you very quickly with a voiceless thunder,<br><br>You couldn't see me, but that's your blunder,<br><br>But feeling me closely, doesn't puts you in danger,<br><br>Because Hubble's discovery will probably answer,<br><br>Can you finally tell my moniker?
+                        </span></div>
+                        <input type="text" name="question20" placeholder="Your answer" autocomplete="off">
                     </div>
                     <button type="submit">Submit answers</button>
                 </form>
@@ -707,7 +711,7 @@ footer
         const now=Date.now();
         if(now<ansstart.getTime())
         {
-            deadlineLabel.textContent='Answering open in';
+            deadlineLabel.textContent='Answering opens in';
             renderCountdown(ansstart.getTime()-now);
             if(!form.classList.contains('locked'))
             {
