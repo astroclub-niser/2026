@@ -582,198 +582,231 @@ footer
     <footer>NAC · Est. signal 2026</footer>
 </div>
 <script>
-    const form=document.getElementById('questions');
-    const statusDiv=document.getElementById('status');
-    const teamChip=document.getElementById('teamChip');
-    const teamChipText=document.getElementById('teamChipText');
-    const progressFill=document.getElementById('progressFill');
-    const progressCount=document.getElementById('progressCount');
-    const qfields=Array.from(form.querySelectorAll('.qfield'));
-    const inputs=qfields.map(f=>f.querySelector('input'));
-    const teamName=sessionStorage.getItem('teamName');
-    const deadlineClock=document.getElementById('deadlineClock');
-    const deadlineLabel=document.getElementById('deadlineLabel');
-    const ddDays=document.getElementById('ddDays');
-    const ddHours=document.getElementById('ddHours');
-    const ddMins=document.getElementById('ddMins');
-    const ddSecs=document.getElementById('ddSecs');
-    const ansstart=new Date('2026-09-02T07:00:00');
-    const ansdead=new Date('2026-09-03T20:00:00');
-    let deadlineTimer=null;
-    if(teamName)
+let __netTimeOffset=0;
+function netNow()
+{
+    return Date.now()+__netTimeOffset;
+}
+async function syncNetworkTime()
+{
+    const sources=[{url:'https://worldtimeapi.org/api/timezone/Asia/Kolkata',parse:d=>d.unixtime*1000},{url:'https://timeapi.io/api/time/current/zone?timeZone=Asia/Kolkata',parse:d=>new Date(d.dateTime+'+05:30').getTime()},{url:'https://worldclockapi.com/api/json/utc/now',parse:d=>new Date(d.currentDateTime).getTime()}];
+    for(const src of sources)
     {
-        teamChipText.innerHTML='Answering as team <b>'+teamName+'</b>';
-    }
-    else
-    {
-        teamChip.classList.add('warn');
-        teamChipText.innerHTML='No team detected — <a href="index.html">log in first</a>';
-    }
-
-    function setStatus(text,kind)
-    {
-        statusDiv.textContent=text;
-        statusDiv.className=kind || '';
-    }
-
-    function pad(n)
-    {
-        return String(n).padStart(2,'0');
-    }
-
-    function updateProgress()
-    {
-        let filled=0;
-        qfields.forEach((field,i)=>
+        try
         {
-            const has=inputs[i].value.trim()!=='';
-            field.classList.toggle('filled',has);
-            if(has)
+            const t0=Date.now();
+            const res=await fetch(src.url,{cache:'no-store'});
+            if(!res.ok)
             {
-                filled++;
+                continue;
             }
-        });
-        progressCount.textContent=filled+' / '+qfields.length;
-        progressFill.style.width=Math.round((filled/qfields.length)*100)+'%';
-    }
-    inputs.forEach(input=>input.addEventListener('input',updateProgress));
-    updateProgress();
-    function lockForm()
-    {
-        form.classList.add('locked');
-        form.querySelector('button[type="submit"]').disabled=true;
-    }
-    function unlockForm()
-    {
-        form.classList.remove('locked');
-        form.querySelector('button[type="submit"]').disabled=false;
-    }
-    function closeAnswerWindow()
-    {
-        if(deadlineTimer)
-        {
-            clearInterval(deadlineTimer);
-            deadlineTimer=null;
-        }
-        deadlineLabel.textContent='Answering closed';
-        deadlineClock.textContent='Answer window closed';
-        lockForm();
-    }
-    function renderCountdown(diffMs)
-    {
-        const totalSecs=Math.max(0,Math.floor(diffMs/1000));
-        ddDays.textContent=pad(Math.floor(totalSecs/86400));
-        ddHours.textContent=pad(Math.floor((totalSecs%86400)/3600));
-        ddMins.textContent=pad(Math.floor((totalSecs%3600)/60));
-        ddSecs.textContent=pad(totalSecs%60);
-    }
-    function tickWindow()
-    {
-        const now=Date.now();
-        if(now<ansstart.getTime())
-        {
-            deadlineLabel.textContent='Answering opens in';
-            renderCountdown(ansstart.getTime()-now);
-            if(!form.classList.contains('locked'))
+            const data=await res.json();
+            const serverMs=src.parse(data);
+            const t1=Date.now();
+            if(serverMs && !isNaN(serverMs))
             {
-                lockForm();
-                setStatus('Answering aren\'t open yet — come back at '+ansstart.toLocaleString()+'.','');
+                __netTimeOffset=serverMs-((t0+t1)/2);
+                return true;
             }
-            return;
         }
-        if(now>=ansdead.getTime())
+        catch(e)
         {
-            closeAnswerWindow();
-            return;
+            console.error('Error fetching network time from',src.url,e);
         }
-        if(form.classList.contains('locked'))
+    }
+    return false;
+}
+syncNetworkTime();
+setInterval(syncNetworkTime,5*60*1000);
+const form=document.getElementById('questions');
+const statusDiv=document.getElementById('status');
+const teamChip=document.getElementById('teamChip');
+const teamChipText=document.getElementById('teamChipText');
+const progressFill=document.getElementById('progressFill');
+const progressCount=document.getElementById('progressCount');
+const qfields=Array.from(form.querySelectorAll('.qfield'));
+const inputs=qfields.map(f=>f.querySelector('input'));
+const teamName=sessionStorage.getItem('teamName');
+const deadlineClock=document.getElementById('deadlineClock');
+const deadlineLabel=document.getElementById('deadlineLabel');
+const ddDays=document.getElementById('ddDays');
+const ddHours=document.getElementById('ddHours');
+const ddMins=document.getElementById('ddMins');
+const ddSecs=document.getElementById('ddSecs');
+const ansstart=new Date('2026-09-02T07:00:00+05:30');
+const ansdead=new Date('2026-09-03T20:00:00+05:30');
+let deadlineTimer=null;
+if(teamName)
+{
+    teamChipText.innerHTML='Answering as team <b>'+teamName+'</b>';
+}
+else
+{
+    teamChip.classList.add('warn');
+    teamChipText.innerHTML='No team detected — <a href="index.html">log in first</a>';
+}
+function setStatus(text,kind)
+{
+    statusDiv.textContent=text;
+    statusDiv.className=kind || '';
+}
+
+function pad(n)
+{
+    return String(n).padStart(2,'0');
+}
+function updateProgress()
+{
+    let filled=0;
+    qfields.forEach((field,i)=>
+    {
+        const has=inputs[i].value.trim()!=='';
+        field.classList.toggle('filled',has);
+        if(has)
         {
-            unlockForm();
+            filled++;
+        }
+    });
+    progressCount.textContent=filled+' / '+qfields.length;
+    progressFill.style.width=Math.round((filled/qfields.length)*100)+'%';
+}
+inputs.forEach(input=>input.addEventListener('input',updateProgress));
+updateProgress();
+function lockForm()
+{
+    form.classList.add('locked');
+    form.querySelector('button[type="submit"]').disabled=true;
+}
+function unlockForm()
+{
+    form.classList.remove('locked');
+    form.querySelector('button[type="submit"]').disabled=false;
+}
+function closeAnswerWindow()
+{
+    if(deadlineTimer)
+    {
+        clearInterval(deadlineTimer);
+        deadlineTimer=null;
+    }
+    deadlineLabel.textContent='Answering closed';
+    deadlineClock.textContent='Answer window closed';
+    lockForm();
+}
+function renderCountdown(diffMs)
+{
+    const totalSecs=Math.max(0,Math.floor(diffMs/1000));
+    ddDays.textContent=pad(Math.floor(totalSecs/86400));
+    ddHours.textContent=pad(Math.floor((totalSecs%86400)/3600));
+    ddMins.textContent=pad(Math.floor((totalSecs%3600)/60));
+    ddSecs.textContent=pad(totalSecs%60);
+}
+function tickWindow()
+{
+    const now=netNow();
+    if(now<ansstart.getTime())
+    {
+        deadlineLabel.textContent='Answering opens in';
+        renderCountdown(ansstart.getTime()-now);
+        if(!form.classList.contains('locked'))
+        {
+            lockForm();
+            setStatus('Answering aren\'t open yet — come back at '+ansstart.toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'})+' IST'+'.','');
+        }
+        return;
+    }
+    if(now>=ansdead.getTime())
+    {
+        closeAnswerWindow();
+        return;
+    }
+    if(form.classList.contains('locked'))
+    {
+        unlockForm();
+        setStatus('','');
+    }
+    deadlineLabel.textContent='Answering close';
+    renderCountdown(ansdead.getTime()-now);
+}
+tickWindow();
+deadlineTimer=setInterval(tickWindow,1000);
+if(teamName)
+{
+    setStatus('Loading your saved answers…','');
+    fetch(form.action+'?getanswers='+encodeURIComponent(teamName),{method:'get'}).then(r=>r.json()).then(data=>
+    {
+        if(data.result==='success' && data.found)
+        {
+            inputs.forEach(input=>
+            {
+                const key=input.name.replace(/\s+/g,'').toLowerCase();
+                if(data.answers && data.answers[key]!==undefined)
+                {
+                    input.value=data.answers[key];
+                }
+            });
+            updateProgress();
+            setStatus('Showing your last saved answers — edit and resubmit any time before the deadline.','ok');
+        }
+        else
+        {
             setStatus('','');
         }
-        deadlineLabel.textContent='Answering close';
-        renderCountdown(ansdead.getTime()-now);
-    }
-    tickWindow();
-    deadlineTimer=setInterval(tickWindow,1000);
-    if(teamName)
+    }).catch(err=>
     {
-        setStatus('Loading your saved answers…','');
-        fetch(form.action+'?getanswers='+encodeURIComponent(teamName),{method:'get'}).then(r=>r.json()).then(data=>
+        setStatus('','');
+        console.error(err);
+    });
+}
+form.addEventListener('submit',function(e)
+{
+    e.preventDefault();
+    if(!teamName)
+    {
+        setStatus('Log in with your team before submitting.','err');
+        return;
+    }
+    if(netNow()<ansstart.getTime())
+    {
+        setStatus('Answering aren\'t open yet — come back at '+ansstart.toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'})+' IST'+'.','err');
+        return;
+    }
+    const btn=form.querySelector('button[type="submit"]');
+    btn.disabled=true;
+    setStatus('Submitting…','');
+    const formData=new FormData(form);
+    formData.append('teamname',teamName);
+    fetch(form.action,{method:'post',body:formData}).then(r=>r.json()).then(data=>
+    {
+        if(data.result==='success')
         {
-            if(data.result==='success' && data.found)
+            setStatus(data.updated?'Answers updated. You can keep editing until the deadline.':'Answers submitted successfully.','ok');
+            btn.disabled=false;
+        }
+        else
+        {
+            setStatus('Error: '+(data.error || data.message),'err');
+            const errLower=(data.error || '').toLowerCase();
+            if(errLower.includes('closed'))
             {
-                inputs.forEach(input=>
-                {
-                    const key=input.name.replace(/\s+/g,'').toLowerCase();
-                    if(data.answers && data.answers[key]!==undefined)
-                    {
-                        input.value=data.answers[key];
-                    }
-                });
-                updateProgress();
-                setStatus('Showing your last saved answers — edit and resubmit any time before the deadline.','ok');
+                closeAnswerWindow();
+            }
+            else if(errLower.includes('not open') || errLower.includes('opened yet'))
+            {
+                lockForm();
             }
             else
             {
-                setStatus('','');
-            }
-        }).catch(err=>
-        {
-            setStatus('','');
-            console.error(err);
-        });
-    }
-
-    form.addEventListener('submit',function(e)
-    {
-        e.preventDefault();
-        if(!teamName)
-        {
-            setStatus('Log in with your team before submitting.','err');
-            return;
-        }
-        if(Date.now()<ansstart.getTime())
-        {
-            setStatus('Answering aren\'t open yet — come back at '+ansstart.toLocaleString()+'.','err');
-            return;
-        }
-        const btn=form.querySelector('button[type="submit"]');
-        btn.disabled=true;
-        setStatus('Submitting…','');
-        const formData=new FormData(form);
-        formData.append('teamname',teamName);
-        fetch(form.action,{method:'post',body:formData}).then(r=>r.json()).then(data=>
-        {
-                if(data.result==='success')
-                {
-                    setStatus(data.updated?'Answers updated. You can keep editing until the deadline.':'Answers submitted successfully.','ok');
-                    btn.disabled=false;
-                }
-                else
-                {
-                    setStatus('Error: '+(data.error || data.message),'err');
-                    const errLower=(data.error || '').toLowerCase();
-                    if(errLower.includes('closed'))
-                    {
-                        closeAnswerWindow();
-                    }
-                    else if(errLower.includes('not open') || errLower.includes('opened yet'))
-                    {
-                        lockForm();
-                    }
-                    else
-                    {
-                        btn.disabled=false;
-                    }
-                }
-        }).catch(err=>
-        {
-                setStatus('Network error — check your connection.','err');
-                console.error(err);
                 btn.disabled=false;
-        });
+            }
+        }
+    }).catch(err=>
+    {
+        setStatus('Network error — check your connection.','err');
+        console.error(err);
+        btn.disabled=false;
     });
+});
 </script>
 </body>
 </html>
