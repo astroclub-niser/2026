@@ -560,6 +560,42 @@ footer
     <footer>NAC · Est. signal 2026</footer>
 </div>
 <script>
+let __netTimeOffset=0;
+function netNow()
+{
+    return Date.now()+__netTimeOffset;
+}
+async function syncNetworkTime()
+{
+    const sources=[{url:'https://worldtimeapi.org/api/timezone/Asia/Kolkata',parse:d=>d.unixtime*1000},{url:'https://timeapi.io/api/time/current/zone?timeZone=Asia/Kolkata',parse:d=>new Date(d.dateTime+'+05:30').getTime()},{url:'https://worldclockapi.com/api/json/utc/now',parse:d=>new Date(d.currentDateTime).getTime()}];
+    for(const src of sources)
+    {
+        try
+        {
+            const t0=Date.now();
+            const res=await fetch(src.url,{cache:'no-store'});
+            if(!res.ok)
+            {
+                continue;
+            }
+            const data=await res.json();
+            const serverMs=src.parse(data);
+            const t1=Date.now();
+            if(serverMs && !isNaN(serverMs))
+            {
+                __netTimeOffset=serverMs-((t0+t1)/2);
+                return true;
+            }
+        }
+        catch(e)
+        {
+            console.error('Failed to sync time from',src.url,e);
+        }
+    }
+    return false;
+}
+syncNetworkTime();
+setInterval(syncNetworkTime,5*60*1000);
 const register=document.getElementById('regis');
 const login=document.getElementById('login');
 const statusDiv=document.getElementById('status');
@@ -586,7 +622,7 @@ function showLogin()
 }
 btnRegister.addEventListener('click',showRegister);
 btnLogin.addEventListener('click',showLogin);
-const unlocklogin=new Date('2026-08-30T12:30:00');
+const unlocklogin=new Date('2026-08-30T12:30:00+05:30');
 const countdown=document.getElementById('countdown');
 const feilds=document.getElementById('feilds');
 const namelogin=login.querySelector('input[name="loginname"]');
@@ -616,7 +652,7 @@ function unlock()
 }
 function tickCountdown()
 {
-    const diff=unlocklogin.getTime()-Date.now();
+    const diff=unlocklogin.getTime()-netNow();
     if(diff<=0)
     {
         unlock();
@@ -634,7 +670,7 @@ function tickCountdown()
 }
 namelogin.required=false;
 passwordlogin.required=false;
-if(Date.now()>=unlocklogin.getTime())
+if(netNow()>=unlocklogin.getTime())
 {
     unlock();
 }
